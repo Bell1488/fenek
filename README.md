@@ -46,36 +46,33 @@ TRUST_REVERSE_PROXY=0
 1. Установите зависимости:
 
 ```
-sudo apt update
-sudo apt install python3 python3-venv curl nginx unzip
+apt update
+apt install python3 python3-venv curl nginx unzip
 ```
 
-2. Распакуйте архив и разместите папку `Fenek-pro` как `/opt/fenek`. Создайте системного пользователя и папку закрытой базы:
+2. Разместите проект как `/opt/fenek` и создайте папку закрытой базы (команды выполняются от root):
 
 ```
-sudo useradd --system --home /opt/fenek --shell /usr/sbin/nologin fenek
-sudo mkdir -p /opt/fenek/private
-sudo chown -R fenek:fenek /opt/fenek
-sudo chmod 700 /opt/fenek/private
-sudo chmod 600 /opt/fenek/.env
+mkdir -p /opt/fenek/private
+chmod 700 /opt/fenek/private
 ```
 
-Если пользователь fenek уже существует, повторно создавать его не нужно. При установке из Git создайте `/opt/fenek/.env` на VPS по образцу `.env.example` и заполните актуальными реквизитами бота, чата и SOCKS-прокси. Этот файл исключён из Git. Не рассчитывайте на `.env` в архиве или клоне. Публичная папка — исключительно `dist`, корень проекта с `.env` не должен раздаваться веб-сервером. Подробная инструкция: [`docs/DEPLOY.md`](docs/DEPLOY.md).
+При установке из Git создайте `/opt/fenek/.env` на VPS по образцу `.env.example` и заполните актуальными реквизитами бота, чата и SOCKS-прокси. Этот файл исключён из Git. Не рассчитывайте на `.env` в архиве или клоне. Службы работают от root, как и команды в этой инструкции. Публичная папка — исключительно `dist`, корень проекта с `.env` не должен раздаваться веб-сервером. Подробная инструкция: [`docs/DEPLOY.md`](docs/DEPLOY.md).
 
 3. Создайте окружение и установите Gunicorn:
 
 ```
 cd /opt/fenek
-sudo -u fenek ./scripts/install-venv.sh
+./scripts/install-venv.sh
 ```
 
 4. Установите службы:
 
 ```
-sudo cp docs/fenek.service docs/fenek-cleanup.service docs/fenek-cleanup.timer /etc/systemd/system/
-sudo systemctl daemon-reload
-sudo systemctl enable --now fenek.service fenek-cleanup.timer
-sudo systemctl status fenek.service
+cp docs/fenek.service docs/fenek-cleanup.service docs/fenek-cleanup.timer /etc/systemd/system/
+systemctl daemon-reload
+systemctl enable --now fenek.service fenek-cleanup.timer
+systemctl status fenek.service
 ```
 
 Служба слушает только `127.0.0.1:8080`, сама перезапускается при сбое. Почасовая служба очистки удаляет из серверной базы обращения старше 30 дней.
@@ -83,8 +80,8 @@ sudo systemctl status fenek.service
 5. Подключите Nginx и сертификат SSL. Пример — `docs/nginx-fenek.conf`. Сначала получите сертификат для `fenek.pro` и `www.fenek.pro` вашим способом, затем установите конфигурацию с корректными путями к сертификатам и проверьте:
 
 ```
-sudo nginx -t
-sudo systemctl reload nginx
+nginx -t
+systemctl reload nginx
 ```
 
 Nginx перенаправляет HTTP и www на `https://fenek.pro` и перезаписывает X-Real-IP. В `.env` доверие включено только для loopback-адресов локального Nginx. Если сервер размещается за другим прокси, явно настройте TRUSTED_PROXY_CIDRS и не доверяйте заголовкам произвольных посетителей.
@@ -94,7 +91,7 @@ Nginx перенаправляет HTTP и www на `https://fenek.pro` и пе�
 После изменения кода или `.env`:
 
 ```
-sudo systemctl restart fenek.service
+systemctl restart fenek.service
 ```
 
 Не используйте встроенный сервер Python для рекламного трафика. Для боевого сайта предназначена служба Gunicorn.
@@ -109,8 +106,8 @@ sudo systemctl restart fenek.service
 
 ```
 cd /opt/fenek
-sudo -u fenek .venv/bin/python backend/server.py pending
-sudo -u fenek .venv/bin/python backend/server.py show UUID
+.venv/bin/python backend/server.py pending
+.venv/bin/python backend/server.py show UUID
 ```
 
 Команда show выводит данные обращения — используйте её только в закрытой консоли администратора. Регулярно проверяйте недоставленные обращения. Автоматическая повторная отправка неопределённых заявок не включена.

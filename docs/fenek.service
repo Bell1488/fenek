@@ -5,8 +5,6 @@ Wants=network-online.target
 
 [Service]
 Type=simple
-User=fenek
-Group=fenek
 WorkingDirectory=/opt/fenek
 EnvironmentFile=/opt/fenek/.env
 ExecStart=/opt/fenek/.venv/bin/gunicorn --bind 127.0.0.1:8080 --workers 2 --threads 4 --timeout 45 --access-logfile /dev/null backend.server:application

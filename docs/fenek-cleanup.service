@@ -3,8 +3,6 @@ Description=Fenek expired lead cleanup
 
 [Service]
 Type=oneshot
-User=fenek
-Group=fenek
 WorkingDirectory=/opt/fenek
 EnvironmentFile=/opt/fenek/.env
 ExecStart=/opt/fenek/.venv/bin/python backend/server.py cleanup
