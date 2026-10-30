@@ -1,6 +1,6 @@
 /* Публичные настройки. Секретов в этом файле быть не должно. */
 window.SIROKKO_CONFIG = {
-  metrikaId: 0,
+  metrikaId: 113941193,
   leadEndpoint: '/api/lead',
   telegram: '',
   max: ''
