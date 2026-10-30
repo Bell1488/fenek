@@ -1,0 +1,23 @@
+[Unit]
+Description=Fenek.pro website and lead handler
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=fenek
+Group=fenek
+WorkingDirectory=/opt/fenek
+EnvironmentFile=/opt/fenek/.env
+ExecStart=/opt/fenek/.venv/bin/gunicorn --bind 127.0.0.1:8080 --workers 2 --threads 4 --timeout 45 --access-logfile /dev/null backend.server:application
+Restart=on-failure
+RestartSec=5
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/opt/fenek/private
+
+[Install]
+WantedBy=multi-user.target
