@@ -11,13 +11,13 @@ import unittest
 from unittest.mock import patch
 import uuid
 
-spec=importlib.util.spec_from_file_location('fenek_server',Path(__file__).parents[1]/'backend'/'server.py')
+spec=importlib.util.spec_from_file_location('sirokko_server',Path(__file__).parents[1]/'backend'/'server.py')
 s=importlib.util.module_from_spec(spec);spec.loader.exec_module(s)
 class LeadTests(unittest.TestCase):
     def setUp(self):
         self.tmp=tempfile.TemporaryDirectory()
-        self.config={'proxy':'socks5h://test:pass@127.0.0.1:12345','bot':'123456789:ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghi','chat':'-1001234567890','origins':{'https://fenek.pro'},'db':Path(self.tmp.name)/'private'/'leads.sqlite3','trust_proxy':False}
-        self.env={'HTTP_ORIGIN':'https://fenek.pro','REMOTE_ADDR':'127.0.0.1'}
+        self.config={'proxy':'socks5h://test:pass@127.0.0.1:12345','bot':'123456789:ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghi','chat':'-1001234567890','origins':{'https://sirokko.pro'},'db':Path(self.tmp.name)/'private'/'leads.sqlite3','trust_proxy':False}
+        self.env={'HTTP_ORIGIN':'https://sirokko.pro','REMOTE_ADDR':'127.0.0.1'}
         self.lead={'request_id':str(uuid.uuid4()),'contact':'@test_user','consent':True,'consent_version':'2026-10-30','kind':'payment','service':'Alipay','details':'Тест, без реальной отправки','page':'/'}
     def tearDown(self):self.tmp.cleanup()
     def send(self,data=None):return s.process_lead(json.dumps(data or self.lead).encode(),self.env,self.config)

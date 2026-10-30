@@ -1,5 +1,5 @@
 [Unit]
-Description=Fenek hourly cleanup
+Description=Sirokko hourly cleanup
 
 [Timer]
 OnBootSec=5min

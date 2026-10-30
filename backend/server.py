@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fenek WSGI server. Only Telegram delivery is routed through socks5h.
+"""Sirokko WSGI server. Only Telegram delivery is routed through socks5h.
 Static files are served from dist; secrets and SQLite always stay outside it.
 """
 from __future__ import annotations
@@ -46,7 +46,7 @@ def settings():
         'proxy': os.getenv('SOCKS_PROXY_URL', ''),
         'bot': os.getenv('TELEGRAM_BOT_TOKEN', ''),
         'chat': os.getenv('TELEGRAM_CHAT_ID', ''),
-        'origins': set(x.strip().rstrip('/') for x in os.getenv('ALLOWED_ORIGINS', 'https://fenek.pro,https://www.fenek.pro').split(',') if x.strip()),
+        'origins': set(x.strip().rstrip('/') for x in os.getenv('ALLOWED_ORIGINS', 'https://sirokko.pro,https://www.sirokko.pro').split(',') if x.strip()),
         'db': Path(os.getenv('LEAD_DB_PATH', str(ROOT / 'private' / 'leads.sqlite3'))),
         'trust_proxy': os.getenv('TRUST_REVERSE_PROXY', '0') == '1',
         'proxy_cidrs': [x.strip() for x in os.getenv('TRUSTED_PROXY_CIDRS','127.0.0.1/32,::1/128').split(',') if x.strip()],
@@ -126,7 +126,7 @@ def connect_db(path):
 
 
 def delivery_message(lead):
-    lines = ['FENEK.PRO · НОВАЯ ЗАЯВКА', 'ID: '+lead['request_id'], 'Контакт: '+lead['contact'], 'Услуга: '+lead['service']]
+    lines = ['SIROKKO.PRO · НОВАЯ ЗАЯВКА', 'ID: '+lead['request_id'], 'Контакт: '+lead['contact'], 'Услуга: '+lead['service']]
     if lead['amount']: lines.append('Сумма: '+lead['amount']+' '+lead['currency'])
     if lead['details']: lines.append('Комментарий: '+lead['details'])
     if lead['context']: lines.append('Параметры:\n'+lead['context'])
@@ -239,7 +239,7 @@ def application(environ, start_response):
         except LeadError as error: return json_response(start_response,error.status,{'ok':False,'delivered':False,'message':error.message})
         except Exception:
             # Never log payload, bot token, proxy URL, curl config or exception text.
-            print('Fenek: lead handler internal failure', file=sys.stderr)
+            print('Sirokko: lead handler internal failure', file=sys.stderr)
             return json_response(start_response,500,{'ok':False,'message':'Не удалось отправить заявку. Напишите нам в Telegram или MAX.'})
     if method not in ('GET','HEAD'): return json_response(start_response,405,{'ok':False})
     relative = unquote(path).lstrip('/') or 'index.html'
@@ -274,5 +274,5 @@ if __name__=='__main__':
         print(json.dumps({'payload':json.loads(row[0]),'state':row[1]},ensure_ascii=False,indent=2) if row else 'Not found');db.close()
     else:
         host=os.getenv('HOST','127.0.0.1');port=int(os.getenv('PORT','8080'))
-        print('Fenek local server: http://'+host+':'+str(port)+' (use Gunicorn/Nginx in production)')
+        print('Sirokko local server: http://'+host+':'+str(port)+' (use Gunicorn/Nginx in production)')
         with make_server(host,port,application) as server: server.serve_forever()

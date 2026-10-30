@@ -1,7 +1,13 @@
 /* Публичные настройки. Секретов в этом файле быть не должно. */
-window.FENEK_CONFIG = {
-  metrikaId: 113930499,
+window.SIROKKO_CONFIG = {
+  metrikaId: 0,
   leadEndpoint: '/api/lead',
-  telegram: 'https://t.me/obmen_FENEK',
-  max: 'https://max.ru/u/f9LHodD0cOJwHwwEl7zZ1q24VLJZnsEX_86Oy6-JdjIa4qDYqKG2D9SdlIY'
+  telegram: '',
+  max: ''
 };
+
+document.querySelectorAll('[data-contact]').forEach(link => {
+  const target = window.SIROKKO_CONFIG[link.dataset.contact];
+  if (target) link.href = target;
+  else link.style.display = 'none';
+});

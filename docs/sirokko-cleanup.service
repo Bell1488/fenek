@@ -1,0 +1,13 @@
+[Unit]
+Description=Sirokko expired lead cleanup
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/sirokko
+EnvironmentFile=/opt/sirokko/.env
+ExecStart=/opt/sirokko/.venv/bin/python backend/server.py cleanup
+UMask=0077
+NoNewPrivileges=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/opt/sirokko/private

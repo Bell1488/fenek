@@ -7,7 +7,7 @@ import subprocess
 import sys
 
 path=Path(__file__).resolve().parents[1]/'backend'/'server.py'
-spec=importlib.util.spec_from_file_location('fenek_server_check',path)
+spec=importlib.util.spec_from_file_location('sirokko_server_check',path)
 server=importlib.util.module_from_spec(spec);spec.loader.exec_module(server)
 cfg=server.settings()
 if not server.configured(cfg):
