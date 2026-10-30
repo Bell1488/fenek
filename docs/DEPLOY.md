@@ -18,6 +18,33 @@ dig +short A www.sirokko.pro
 dig +short AAAA sirokko.pro
 ```
 
+## Переезд с работающего Fenek
+
+Если текущая версия запущена из `/opt/fenek`, перенесите базу и серверный `.env` в новый каталог. Команды ниже выполняются от root; старый сервис останавливается только на время переключения:
+
+```sh
+systemctl stop fenek.service fenek-cleanup.timer
+git clone https://github.com/Bell1488/fenek.git /opt/sirokko
+install -d -m 0700 /opt/sirokko/private
+cp -a /opt/fenek/.env /opt/sirokko/.env
+cp -a /opt/fenek/private/leads.sqlite3 /opt/sirokko/private/leads.sqlite3
+sed -i \
+  -e 's#^ALLOWED_ORIGINS=.*#ALLOWED_ORIGINS=https://sirokko.pro,https://www.sirokko.pro#' \
+  -e 's#^LEAD_DB_PATH=.*#LEAD_DB_PATH=/opt/sirokko/private/leads.sqlite3#' \
+  /opt/sirokko/.env
+chown root:root /opt/sirokko/.env
+chmod 0600 /opt/sirokko/.env
+chmod 0600 /opt/sirokko/private/leads.sqlite3
+```
+
+После проверки нового сайта старые службы можно отключить:
+
+```sh
+systemctl disable fenek.service fenek-cleanup.timer
+```
+
+Не удаляйте `/opt/fenek` и старую базу до подтверждения, что заявки и сайт Sirokko работают.
+
 ## 1. Установка кода
 
 Подключитесь к VPS как `root`. Если прямой SSH-вход root отключен, войдите под администратором и переключитесь в root shell командой `sudo -i`. Дальше команды выполняются от root:
